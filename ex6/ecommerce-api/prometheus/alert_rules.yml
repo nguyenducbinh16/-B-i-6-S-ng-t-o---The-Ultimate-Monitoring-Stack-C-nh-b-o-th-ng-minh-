@@ -1,0 +1,29 @@
+
+groups:
+  - name: server-health-alerts
+    rules:
+      - alert: HighCPUUsage
+        expr: |
+          (1 - avg by (instance) (
+            rate(node_cpu_seconds_total{mode="idle"}[5m])
+          )) * 100 > 90
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "CPU usage exceeds 90%"
+          description: "CPU usage has remained above 90% for 1 minute."
+
+      - alert: HighMemoryUsage
+        expr: |
+          (1 -
+            node_memory_MemAvailable_bytes
+            /
+            node_memory_MemTotal_bytes
+          ) * 100 > 90
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "RAM usage exceeds 90%"
+          description: "RAM usage has remained above 90% for 1 minute."
